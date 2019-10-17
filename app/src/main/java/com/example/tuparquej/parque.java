@@ -15,6 +15,8 @@ import android.widget.TextView;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.squareup.picasso.Picasso;
+
 public class parque extends AppCompatActivity {
 
     private ImageButton reviews;
@@ -22,6 +24,7 @@ public class parque extends AppCompatActivity {
     private ImageButton details;
     private ImageButton back;
     private ImageButton goMap;
+    private ImageView imagenParque;
 
     //Parque seleccionado
     private int pos;
@@ -64,7 +67,7 @@ public class parque extends AppCompatActivity {
         verdeAhora=(ImageView) findViewById(R.id.imageView10);
         back=(ImageButton) findViewById(R.id.imageButtonBack);
         goMap=(ImageButton) findViewById(R.id.imageButtonGo);
-
+        imagenParque=(ImageView) findViewById(R.id.imageView6);
 
         Bundle b=getIntent().getExtras();
         if(b!=null)
@@ -78,6 +81,8 @@ public class parque extends AppCompatActivity {
         //edicion info
         nomb.setText(nombre);
         barr.setText(barrio);
+
+        Picasso.get().load(par.getImagen()).fit().into(imagenParque);
 
         //Controla Fragmentos De Tabs
         details.setOnClickListener(new View.OnClickListener() {

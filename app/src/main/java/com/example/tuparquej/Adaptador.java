@@ -8,9 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -49,13 +51,20 @@ public class Adaptador extends BaseAdapter {
 
         convertView= LayoutInflater.from(context).inflate(R.layout.item, null);
 
-        Button btnFoto= (Button)convertView.findViewById(R.id.buttonParque);
+        ImageButton btnFoto= (ImageButton)convertView.findViewById(R.id.buttonParque);
         TextView nombre=convertView.findViewById(R.id.textViewNombre);
         TextView barrio=convertView.findViewById(R.id.textViewBarrio);
         ImageView estrellas=convertView.findViewById(R.id.imageViewEstrellas);
         TextView distancia=convertView.findViewById(R.id.textViewDistancia);
 
-        //btnFoto.setBackground(item.getImgFoto());
+
+        if(item.getImagen()!=null)
+        {
+            btnFoto.setBackground(null);
+            Picasso.get().load(item.getImagen()).fit().into(btnFoto);
+        }
+
+
         nombre.setText(item.getNombre());
         barrio.setText(item.getBarrio());
 
