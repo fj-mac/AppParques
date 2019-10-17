@@ -1,11 +1,11 @@
 package com.example.tuparquej;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         aceptarAuto=(Button) findViewById(R.id.button);
         aceptarManual=(Button) findViewById(R.id.button2);
-        login=(Button) findViewById(R.id.button3);
+        login=(Button) findViewById(R.id.buttonLogIn);
 
         aceptarAuto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                openLogIn();
 
             }
         });
@@ -46,6 +47,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void openHome(){
         Intent intent =new Intent(this, Home.class);
+        startActivity(intent);
+    }
+    public void openLogIn(){
+        Intent intent =new Intent(this, Login.class);
         startActivity(intent);
     }
 }

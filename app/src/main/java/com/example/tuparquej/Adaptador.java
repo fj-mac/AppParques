@@ -58,7 +58,6 @@ public class Adaptador extends BaseAdapter {
         //btnFoto.setBackground(item.getImgFoto());
         nombre.setText(item.getNombre());
         barrio.setText(item.getBarrio());
-<<<<<<< HEAD
 
         double e=item.getEstrellas();
         if(e==0)
@@ -85,21 +84,14 @@ public class Adaptador extends BaseAdapter {
             estrellas.setImageResource(R.drawable.ecincoestrellas);
         }
 
-        distancia.setText("80");
-=======
-        estrellas.setText(item.getEstrellas()+"");
-        distancia.setText(item.getDistancia()+"");
->>>>>>> 34ac7b5b13a62b05f9e148fe9f72effcc6fdde2b
+
+        distancia.setText("230");
         btnFoto.setTag(position);
         btnFoto.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent =new Intent(context, parque.class);
                 Bundle b =new Bundle();
-<<<<<<< HEAD
                 b.putInt("key",(Integer) v.getTag());
-=======
-                b.putString("key",(Integer) v.getTag()+"");
->>>>>>> 34ac7b5b13a62b05f9e148fe9f72effcc6fdde2b
                 intent.putExtras(b);
                 context.startActivity(intent);
             }
