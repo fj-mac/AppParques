@@ -24,6 +24,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.squareup.picasso.Picasso;
@@ -245,21 +246,44 @@ public class parque extends AppCompatActivity {
             final String usuario=Login.user.getUid();
             Map<String, Object> note=new HashMap<>();
             String idString=id+"";
-            note.put(idString,id);
-            db.collection("Usuarios").document(usuario).update(note)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            verificarFavoritos();
-                            Toast.makeText(parque.this, "Se ha guardado el parque como favorito", Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(parque.this, "Error! el usuario es: "+usuario+"El error es: "+e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
+
+            if(Login.listaFavoritos.contains(id))
+            {
+                favorito.setImageResource(R.drawable.corazonvacio);
+                note.put(id+"", FieldValue.delete());
+                db.collection("Usuarios").document(usuario).update(note)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                verificarFavoritos();
+                                Toast.makeText(parque.this, "Se ha guardado el parque como favorito", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(parque.this, "Error! el usuario es: "+usuario+"El error es: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            }
+            else{
+                note.put(idString,id);
+                db.collection("Usuarios").document(usuario).update(note)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                verificarFavoritos();
+                                Toast.makeText(parque.this, "Se ha guardado el parque como favorito", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(parque.this, "Error! el usuario es: "+usuario+"El error es: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            }
+
         }
         else
         {
