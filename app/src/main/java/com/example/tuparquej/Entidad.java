@@ -1,12 +1,11 @@
 package com.example.tuparquej;
 
-import android.util.Log;
-
 import java.security.Key;
 import java.util.HashMap;
 
 public class Entidad {
     private String imagen;
+    private int id;
     private String nombre;
     private String barrio;
     private String details;
@@ -18,7 +17,8 @@ public class Entidad {
     public Entidad() {
     }
 
-    public Entidad(String imagen, String nombre, String barrio, String details, int estrellas, double latitud, double longitud) {
+    public Entidad(int id, String imagen, String nombre, String barrio, String details, int estrellas, double latitud, double longitud) {
+        this.id=id;
         this.imagen = imagen;
         this.nombre = nombre;
         this.barrio = barrio;
@@ -26,6 +26,13 @@ public class Entidad {
         this.estrellas = estrellas;
         this.latitud = latitud;
         this.longitud = longitud;
+    }
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getImagen() {
@@ -42,7 +49,6 @@ public class Entidad {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-        Log.d("numero", "Se ha cargado el parque con nombre: " +nombre);
     }
 
     public String getBarrio() {

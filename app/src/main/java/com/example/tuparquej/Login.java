@@ -2,12 +2,14 @@ package com.example.tuparquej;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -24,24 +26,46 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 public class Login extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 100;
+
     private GoogleSignInClient mGoogleSignInClient;
     private SignInButton login;
     private Button login2;
+    private Button signIn;
     private FirebaseAuth mAuth;
     private EditText correo;
     private EditText clave;
+    private EditText clave2;
+    public static ArrayList<Integer> listaFavoritos;
+    public static FirebaseUser user=null;
+    private FirebaseFirestore db= FirebaseFirestore.getInstance();
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         login=findViewById(R.id.googleSignIn);
         login2=findViewById(R.id.button3);
+        signIn=findViewById(R.id.buttonSignUp);
         correo=findViewById(R.id.editText3);
         clave=findViewById(R.id.editText2);
+        clave2=findViewById(R.id.editText4);
+
+
+
         login.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 googleLogin();
@@ -52,6 +76,15 @@ public class Login extends AppCompatActivity {
                 normalLogin();
             }
         });
+        signIn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                clave2.setVisibility(View.VISIBLE);
+                normalSignUp();
+            }
+        });
+
+
+
         mAuth = FirebaseAuth.getInstance();
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -79,8 +112,9 @@ public class Login extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             //Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
+                             user = mAuth.getCurrentUser();
                             //updateUI(user);
+                            finish();
                         } else {
                             // If sign in fails, display a message to the user.
                             //Log.w(TAG, "createUserWithEmail:failure", task.getException());
@@ -91,12 +125,12 @@ public class Login extends AppCompatActivity {
                         // ...
                     }
                 });
-        finish();
+
     }
     private void normalLogin() {
         String email=correo.getText().toString();
         String password=clave.getText().toString();
-        while (verificar()==false)
+        while (verificarSignUp()==false)
         {
 
         }
@@ -107,7 +141,13 @@ public class Login extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             //Log.d(TAG, "signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
+                            user = mAuth.getCurrentUser();
+                            new Thread(new Runnable() {
+                                public void run() {
+                                    verificarFavoritos();
+                                }
+                            }).start();
+                            finish();
                             //updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
@@ -119,6 +159,7 @@ public class Login extends AppCompatActivity {
                         // ...
                     }
                 });
+
     }
 
     @Override
@@ -149,7 +190,13 @@ public class Login extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
 
-                            FirebaseUser user = mAuth.getCurrentUser();
+                            user = mAuth.getCurrentUser();
+
+                            new Thread(new Runnable() {
+                                public void run() {
+                                    verificarFavoritos();
+                                }
+                            }).start();
                             Toast.makeText(Login.this, "Se ha iniciado con el correo: "+user.getDisplayName(), Toast.LENGTH_SHORT).show();
                             finish();
                             //updateUI(user);
@@ -168,8 +215,32 @@ public class Login extends AppCompatActivity {
                 Toast.makeText(Login.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+
     }
+
     private boolean verificar(){
         return true;
+    }
+    private boolean verificarSignUp(){
+        return true;
+    }
+    public void verificarFavoritos(){
+        final DocumentReference favoritos=db.collection("Usuarios").document(user.getUid());
+        favoritos.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot ds, @Nullable FirebaseFirestoreException e) {
+                if(e !=null){
+                    return;
+                }
+                Map<String, Object> map = ds.getData();
+                listaFavoritos=new ArrayList<>();
+                for (Map.Entry<String, Object> entry : map.entrySet()) {
+                        int parque=Integer.parseInt(entry.getValue().toString());
+                       listaFavoritos.add(parque);
+                        Log.d("Guardando","Lo que esta guardando es: "+parque);
+
+                }
+            }
+        });
     }
 }
