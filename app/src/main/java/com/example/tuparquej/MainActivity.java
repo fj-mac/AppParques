@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     public void openHome(){
         Intent intent =new Intent(this, Home.class);
+        intent.putExtra("VieneDe","home");
         startActivity(intent);
     }
     public void openLogIn(){

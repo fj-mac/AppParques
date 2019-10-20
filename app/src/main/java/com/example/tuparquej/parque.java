@@ -250,6 +250,7 @@ public class parque extends AppCompatActivity {
             if(Login.listaFavoritos.contains(id))
             {
                 favorito.setImageResource(R.drawable.corazonvacio);
+                Login.listaFavoritos.remove((Object) id);
                 note.put(id+"", FieldValue.delete());
                 db.collection("Usuarios").document(usuario).update(note)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {

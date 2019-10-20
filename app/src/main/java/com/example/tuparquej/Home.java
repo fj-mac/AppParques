@@ -54,25 +54,34 @@ public class Home extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        parques.addSnapshotListener(this, new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                if(e !=null){
-                    Toast.makeText(Home.this, "Error entrando a base de datos", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, e.toString());
-                    return;
+        Intent myIntent = getIntent(); // gets the previously created intent
+        String mensajeDe = myIntent.getStringExtra("VieneDe");
+        Log.d("ACA","es: "+mensajeDe);
+        if(mensajeDe.equals("home"))
+        {
+            parques.addSnapshotListener(this, new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                    if(e !=null){
+                        Toast.makeText(Home.this, "Error entrando a base de datos", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, e.toString());
+                        return;
+                    }
+                    listItems=new ArrayList<>();
+                    for(QueryDocumentSnapshot documentSnapshots: queryDocumentSnapshots){
+                        Entidad entid=documentSnapshots.toObject(Entidad.class);
+                        listItems.add(entid);
+                        Toast.makeText(Home.this, "Se ha agregado", Toast.LENGTH_SHORT).show();
+                    }
+                    adaptador=new Adaptador(Home.this,getArrayList() );
+                    lvItems.setAdapter(adaptador);
                 }
-                listItems=new ArrayList<>();
-                for(QueryDocumentSnapshot documentSnapshots: queryDocumentSnapshots){
-                    Entidad entid=documentSnapshots.toObject(Entidad.class);
-                    listItems.add(entid);
-                    Toast.makeText(Home.this, "Se ha agregado", Toast.LENGTH_SHORT).show();
-                }
-                adaptador=new Adaptador(Home.this,getArrayList() );
-                lvItems.setAdapter(adaptador);
-            }
-        });
+            });
+        }
+        else{
+            adaptador=new Adaptador(Home.this,getArrayList() );
+            lvItems.setAdapter(adaptador);
+        }
 
     }
 
@@ -81,20 +90,6 @@ public class Home extends AppCompatActivity {
     //Metodo de carga de parques
 
     private ArrayList<Entidad> getArrayList(){
-
-        //Reemplazar esto por lectura desde firebase
-        ArrayList rev=new ArrayList();
-        rev.add("Muy chevere");
-        rev.add("Bonito");
-        rev.add("Amplio");
-        //De prueba
-        //listItems.add( new Entidad(String imagen, String nombre, String barrio, String details, int estrellas, double latitud, double longitud, ArrayList<String> reviews));
-        //listItems.add( new Entidad("","Parque del Japon", "Cabrera", "Parque muy bonito recien remodelado bla bla bla", 5, 4.670100, -74.050342));
-        //listItems.add( new Entidad("","a", "Cabrera", "Parque muy bonito recien remodelado bla bla bla", 4, 4.670100, -74.050342));
-        //listItems.add( new Entidad("","b", "Cabrera", "Parque muy bonito recien remodelado bla bla bla", 3, 4.670100, -74.050342));
-        //listItems.add( new Entidad("","c", "Cabrera", "Parque muy bonito recien remodelado bla bla bla", 2, 4.670100, -74.050342,  rev));
-        //listItems.add( new Entidad("","d", "Cabrera", "Parque muy bonito recien remodelado bla bla bla", 1, 4.670100, -74.050342,  rev));
-        //listItems.add( new Entidad("","e", "Cabrera", "Parque muy bonito recien remodelado bla bla bla", 0, 4.670100, -74.050342,  rev));
         return listItems;
     }
     private ArrayList<Entidad> getEntidades(){
