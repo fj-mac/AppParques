@@ -100,31 +100,36 @@ public class Login extends AppCompatActivity {
     private void normalSignUp(){
         String email=correo.getText().toString();
         String password=clave.getText().toString();
-        while (verificar()==false)
-        {
+        String password2=clave2.getText().toString();
+       if(password==password2)
+       {
+           mAuth.createUserWithEmailAndPassword(email, password)
+                   .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                       @Override
+                       public void onComplete(@NonNull Task<AuthResult> task) {
+                           if (task.isSuccessful()) {
+                               // Sign in success, update UI with the signed-in user's information
+                               //Log.d(TAG, "createUserWithEmail:success");
+                               user = mAuth.getCurrentUser();
+                               //updateUI(user);
+                               finish();
+                           } else {
+                               // If sign in fails, display a message to the user.
+                               //Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                               Toast.makeText(Login.this, "No sirvio el login, intente con google o mas tarde", Toast.LENGTH_SHORT).show();
+                               //updateUI(null);
+                           }
 
-        }
+                           // ...
+                       }
+                   });
+       }
+       else
+       {
+           Toast.makeText(this, "Las contraseñas no coinciden. Por favor verifiquelas e intente nuevamente", Toast.LENGTH_SHORT).show();
+       }
 
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            //Log.d(TAG, "createUserWithEmail:success");
-                             user = mAuth.getCurrentUser();
-                            //updateUI(user);
-                            finish();
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            //Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(Login.this, "No sirvio el login, intente con google o mas tarde", Toast.LENGTH_SHORT).show();
-                            //updateUI(null);
-                        }
 
-                        // ...
-                    }
-                });
 
     }
     private void normalLogin() {

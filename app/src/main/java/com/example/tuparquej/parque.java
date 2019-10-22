@@ -4,6 +4,8 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -56,6 +58,7 @@ public class parque extends AppCompatActivity {
 
     private TextView nomb;
     private TextView barr;
+    private int verif;
 
     //Tabs de fragmentos
     private ImageView verdeDetails;
@@ -69,7 +72,7 @@ public class parque extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parque);
 
-
+        verif=0;
 
         //Para info del parque
         nomb=(TextView) findViewById(R.id.textView6);
@@ -148,35 +151,55 @@ public class parque extends AppCompatActivity {
 
     public void openReviews(Entidad par){
 
-        verdeDetails.setVisibility(View.INVISIBLE);
-        verdeReviews.setVisibility(View.VISIBLE);
-        verdeAhora.setVisibility(View.INVISIBLE);
+        if(Login.user==null)
+        {
+            ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(this.CONNECTIVITY_SERVICE);
+            if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                    connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+                verdeDetails.setVisibility(View.INVISIBLE);
+                verdeReviews.setVisibility(View.VISIBLE);
+                verdeAhora.setVisibility(View.INVISIBLE);
 
-        details.setImageResource(R.drawable.detailsgris);
-        ahora.setImageResource(R.drawable.ahora);
-        reviews.setImageResource(R.drawable.reviewsverde);
-        fragment=new FragmentReviews();
-        FragmentManager fm=getFragmentManager();
-        FragmentTransaction ft=fm.beginTransaction();
-        ft.replace(R.id.frg,fragment);
-        ft.commit();
+                details.setImageResource(R.drawable.detailsgris);
+                ahora.setImageResource(R.drawable.ahora);
+                reviews.setImageResource(R.drawable.reviewsverde);
+                fragment=new FragmentReviews();
+                FragmentManager fm=getFragmentManager();
+                FragmentTransaction ft=fm.beginTransaction();
+                ft.replace(R.id.frg,fragment);
+                ft.commit();
+            }
+            else{
+                Toast.makeText(this, "Para ver los reviews del parque se requiere conexión a internet", Toast.LENGTH_LONG).show();
+            }
+        }
 
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    public void openAhora(Entidad par){
-        verdeDetails.setVisibility(View.INVISIBLE);
-        verdeReviews.setVisibility(View.INVISIBLE);
-        verdeAhora.setVisibility(View.VISIBLE);
-        details.setImageResource(R.drawable.detailsgris);
-        ahora.setImageResource(R.drawable.ahoraverde);
-        reviews.setImageResource(R.drawable.reviews);
 
-        fragment=new FragmentAhora();
-        FragmentManager fm=getFragmentManager();
-        FragmentTransaction ft=fm.beginTransaction();
-        ft.replace(R.id.frg,fragment);
-        ft.commit();
+    public void openAhora(Entidad par){
+        if(Login.user==null)
+        {
+            ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(this.CONNECTIVITY_SERVICE);
+            if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                    connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+                verdeDetails.setVisibility(View.INVISIBLE);
+                verdeReviews.setVisibility(View.INVISIBLE);
+                verdeAhora.setVisibility(View.VISIBLE);
+                details.setImageResource(R.drawable.detailsgris);
+                ahora.setImageResource(R.drawable.ahoraverde);
+                reviews.setImageResource(R.drawable.reviews);
+
+                fragment=new FragmentAhora();
+                FragmentManager fm=getFragmentManager();
+                FragmentTransaction ft=fm.beginTransaction();
+                ft.replace(R.id.frg,fragment);
+                ft.commit();
+            }
+            else{
+                Toast.makeText(this, "Para ver el estado actual se requiere conexión a internet", Toast.LENGTH_LONG).show();
+            }
+        }
     }
     public void openDetails2(Entidad par){
 
@@ -220,22 +243,42 @@ public class parque extends AppCompatActivity {
 
     public void irAMapa(Entidad par){
 
-        double longit=par.getLatitud();
+        double longit=par.getLongitud();
         double latid=par.getLatitud();
         String lugar="google.streetview:cbll="+longit+", "+latid;
-        // Create a Uri from an intent string. Use the result to create an Intent.
-        Uri gmmIntentUri = Uri.parse("google.navigation:q=4.670199,-74.050318");
-        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-        mapIntent.setPackage("com.google.android.apps.maps");
-        startActivity(mapIntent);
+        Uri gmmIntentUri = Uri.parse("google.navigation:q="+latid+","+longit);
+
+        if(Login.user==null)
+        {
+            ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(this.CONNECTIVITY_SERVICE);
+            if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                    connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+
+            }
+            else{
+                if(verif==0)
+                {
+                    Toast.makeText(this, "No hay conexion a internet. Si tiene maps offline, vuelva a presionar go para continuar", Toast.LENGTH_LONG).show();
+                    verif++;
+                }
+                else{
+                    verif=0;
+                    Toast.makeText(this, "Ha sido redireccionado a Maps Offline", Toast.LENGTH_LONG).show();
+                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    mapIntent.setPackage("com.google.android.apps.maps");
+                    startActivity(mapIntent);
+                }
+            }
+        }
+
+
+
     }
     public void verificarFavoritoActual(){
         if (Login.user!=null)
         {
-            Toast.makeText(this, "Entro a verificar parque", Toast.LENGTH_SHORT).show();
             if(Login.listaFavoritos.contains(id))
             {
-                Toast.makeText(this, "Encontro favorito y esta listo", Toast.LENGTH_SHORT).show();
                 favorito.setImageResource(R.drawable.corazonlleno);
             }
         }

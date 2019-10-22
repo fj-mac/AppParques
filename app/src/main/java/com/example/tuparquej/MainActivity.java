@@ -5,6 +5,8 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -56,14 +58,57 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(Login.user!=null)
+        {
+            login.setVisibility(View.INVISIBLE);
+        }
+    }
+
     public void openHome(){
-        Intent intent =new Intent(this, Home.class);
-        intent.putExtra("VieneDe","home");
-        startActivity(intent);
+
+
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(this.CONNECTIVITY_SERVICE);
+        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            Intent intent =new Intent(this, Home.class);
+            intent.putExtra("VieneDe","home");
+            startActivity(intent);
+        }
+        else{
+            if(Home.listItems==null)
+            {
+                Toast.makeText(this, "Actuelmente no dispone del servicio de red. Por favor Intente mas tarde", Toast.LENGTH_LONG).show();
+            }
+            else
+            {
+                Intent intent =new Intent(this, Home.class);
+                intent.putExtra("VieneDe","home");
+                startActivity(intent);
+            }
+        }
+
+
+
+
     }
     public void openLogIn(){
-        Intent intent =new Intent(this, Login.class);
-        startActivity(intent);
+
+        if(Login.user==null)
+        {
+            ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(this.CONNECTIVITY_SERVICE);
+            if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                    connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+                Intent intent =new Intent(this, Login.class);
+                startActivity(intent);
+            }
+            else{
+                Toast.makeText(this, "Para realizar el LogIn debe tener conexion a internet. Verifique e intente mas tarde", Toast.LENGTH_LONG).show();
+            }
+        }
+
     }
 
     public void getCurrentLocation(){
