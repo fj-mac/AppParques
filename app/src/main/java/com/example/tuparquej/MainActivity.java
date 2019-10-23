@@ -112,8 +112,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
             }
         });
-        logout.setOnClickListener(openLogOut());
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openLogOut();
 
+            }
+        });
     }
 
     @Override
