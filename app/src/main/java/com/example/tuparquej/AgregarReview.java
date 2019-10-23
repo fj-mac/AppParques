@@ -1,16 +1,14 @@
 package com.example.tuparquej;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -31,32 +29,35 @@ public class AgregarReview extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_agregar_review);
-
-        editTextNombre=findViewById(R.id.editText_nombre);
         editTextReview=findViewById(R.id.editText_Review);
     }
 
     public void saveReview(View v){
-        String nombre=editTextNombre.getText().toString();
-        String review=editTextReview.getText().toString();
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(this.CONNECTIVITY_SERVICE);
+        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            String nombre=null;
+            if (Login.user!=null)
+            {
+                nombre=Login.user.getDisplayName();
+            }
+            else{
+                nombre="Anonimo";
+            }
+            String review=editTextReview.getText().toString();
+            Map <String, Object> note=new HashMap<>();
+            note.put(KEY_NOMBRE,nombre);
+            note.put (KEY_REVIEW, review);
+            db.collection("Comentarios").add(note);
+            Toast.makeText(this, "Se ha enviado su comentario", Toast.LENGTH_LONG).show();
+            finish();
+        }
+        else {
+            Toast.makeText(this, "Debe tener conexión a internet", Toast.LENGTH_SHORT).show();
+            finish();
+        }
 
-        Map <String, Object> note=new HashMap<>();
-        note.put(KEY_NOMBRE,nombre);
-        note.put (KEY_REVIEW, review);
 
-        db.collection("Reviews").document("My first Review").set(note)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(AgregarReview.this, "Note saved", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(AgregarReview.this, "Error!", Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, e.toString());
-                    }
-                });
+
     }
 }
