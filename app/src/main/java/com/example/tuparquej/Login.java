@@ -1,9 +1,14 @@
 package com.example.tuparquej;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -96,92 +101,125 @@ public class Login extends AppCompatActivity {
         mGoogleSignInClient= GoogleSignIn.getClient(this,gso);
     }
     private void googleLogin(){
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(this.CONNECTIVITY_SERVICE);
+        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+            startActivityForResult(signInIntent, RC_SIGN_IN);
+        }
+        else{
+            //Snackbar snackbar = new Snackbar.make(findViewById(android.R.id.content), "Para realizar el LogIn debe tener conexion a internet. Verifique e intente mas tarde", Snackbar.LENGTH_INDEFINITE);
+            //Snackbar snackbar =new Snackbar.make(this,"a",Snackbar.LENGTH_LONG);
+            Toast.makeText(this, "Para iniciar sesión debe tener conexión a internet. Verifique e intente más tarde", Toast.LENGTH_LONG).show();
+        }
+
+    }
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if(getCurrentFocus()!=null)
+        {
+            InputMethodManager imm=(InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),0);
+        }
+        return super.dispatchTouchEvent(ev);
     }
     private void normalSignUp(){
-        String email=correo.getText().toString();
-        String password=clave.getText().toString();
-        String password2=clave2.getText().toString();
-       if(password.equals(password2))
-       {
-           if (isValidPassword(password))
-           {
-               if(password.length()>=6)
-               {
-                   mAuth.createUserWithEmailAndPassword(email, password)
-                           .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                               @Override
-                               public void onComplete(@NonNull Task<AuthResult> task) {
-                                   if (task.isSuccessful()) {
-                                       // Sign in success, update UI with the signed-in user's information
-                                       //Log.d(TAG, "createUserWithEmail:success");
-                                       user = mAuth.getCurrentUser();
-                                       //updateUI(user);
-                                       finish();
-                                   } else {
-                                       // If sign in fails, display a message to the user.
-                                       Log.w("OJO", "createUserWithEmail:failure", task.getException());
-                                       Toast.makeText(Login.this, "Ocurrio un error en nuestros servidores. Por favor intentelo mas tarde", Toast.LENGTH_LONG).show();
-                                       //updateUI(null);
-                                   }
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(this.CONNECTIVITY_SERVICE);
+        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            String email=correo.getText().toString();
+            String password=clave.getText().toString();
+            String password2=clave2.getText().toString();
+            if(password.equals(password2))
+            {
+                if (isValidPassword(password))
+                {
+                    if(password.length()>=6)
+                    {
+                        mAuth.createUserWithEmailAndPassword(email, password)
+                                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        if (task.isSuccessful()) {
+                                            // Sign in success, update UI with the signed-in user's information
+                                            //Log.d(TAG, "createUserWithEmail:success");
+                                            user = mAuth.getCurrentUser();
+                                            //updateUI(user);
+                                            finish();
+                                        } else {
+                                            // If sign in fails, display a message to the user.
+                                            Log.w("OJO", "createUserWithEmail:failure", task.getException());
+                                            Toast.makeText(Login.this, "Ocurrio un error en nuestros servidores. Por favor intentelo mas tarde", Toast.LENGTH_LONG).show();
+                                            //updateUI(null);
+                                        }
 
-                                   // ...
-                               }
-                           });
-               }
-               else
-               {
-                   Toast.makeText(Login.this, "La contraseña debe contener al menos 6 caracteres", Toast.LENGTH_LONG).show();
-               }
+                                        // ...
+                                    }
+                                });
+                    }
+                    else
+                    {
+                        Toast.makeText(Login.this, "La contraseña debe contener al menos 6 caracteres", Toast.LENGTH_LONG).show();
+                    }
 
-           }
-           else {
-               Toast.makeText(this, "La contraseña debe ser menor a 20 caracteres y contener al menos 1 letra mayuscula, un caracter especial y un numero", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    Toast.makeText(this, "La contraseña debe ser menor a 20 caracteres y contener al menos 1 letra mayuscula, un caracter especial y un numero", Toast.LENGTH_LONG).show();
 
-           }
+                }
 
-       }
-       else
-       {
-           Toast.makeText(this, "Las contraseñas no coinciden. Por favor verifiquelas e intente nuevamente", Toast.LENGTH_SHORT).show();
-       }
+            }
+            else
+            {
+                Toast.makeText(this, "Las contraseñas no coinciden. Por favor verifiquelas e intente nuevamente", Toast.LENGTH_SHORT).show();
+            }
 
 
+        }
+        else{
+            //Snackbar snackbar = new Snackbar.make(findViewById(android.R.id.content), "Para realizar el LogIn debe tener conexion a internet. Verifique e intente mas tarde", Snackbar.LENGTH_INDEFINITE);
+            //Snackbar snackbar =new Snackbar.make(this,"a",Snackbar.LENGTH_LONG);
+            Toast.makeText(this, "Para iniciar sesión debe tener conexión a internet. Verifique e intente más tarde", Toast.LENGTH_LONG).show();
+        }
 
     }
     private void normalLogin() {
-        String email=correo.getText().toString();
-        String password=clave.getText().toString();
-        while (verificarSignUp()==false)
-        {
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(this.CONNECTIVITY_SERVICE);
+        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            String email=correo.getText().toString();
+            String password=clave.getText().toString();
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                // Sign in success, update UI with the signed-in user's information
+                                //Log.d(TAG, "signInWithEmail:success");
+                                user = mAuth.getCurrentUser();
+                                new Thread(new Runnable() {
+                                    public void run() {
+                                        verificarFavoritos();
+                                    }
+                                }).start();
+                                finish();
+                                //updateUI(user);
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                //Log.w(TAG, "signInWithEmail:failure", task.getException());
+                                Toast.makeText(Login.this, "Ha ingresado un usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show();
+                                //updateUI(null);
+                            }
 
-        }
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            //Log.d(TAG, "signInWithEmail:success");
-                            user = mAuth.getCurrentUser();
-                            new Thread(new Runnable() {
-                                public void run() {
-                                    verificarFavoritos();
-                                }
-                            }).start();
-                            finish();
-                            //updateUI(user);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            //Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            Toast.makeText(Login.this, "Ha ingresado un usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show();
-                            //updateUI(null);
+                            // ...
                         }
-
-                        // ...
-                    }
-                });
+                    });
+        }
+        else{
+            //Snackbar snackbar = new Snackbar.make(findViewById(android.R.id.content), "Para realizar el LogIn debe tener conexion a internet. Verifique e intente mas tarde", Snackbar.LENGTH_INDEFINITE);
+            //Snackbar snackbar =new Snackbar.make(this,"a",Snackbar.LENGTH_LONG);
+            Toast.makeText(this, "Para iniciar sesión debe tener conexión a internet. Verifique e intente más tarde", Toast.LENGTH_LONG).show();
+        }
 
     }
 

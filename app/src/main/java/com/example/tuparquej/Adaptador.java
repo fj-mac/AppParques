@@ -94,7 +94,7 @@ public class Adaptador extends BaseAdapter {
         }
 
 
-        distancia.setText(calcularDistancia());
+        distancia.setText(calcularDistancia()+" metros");
         btnFoto.setTag(position);
         btnFoto.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -114,7 +114,7 @@ public class Adaptador extends BaseAdapter {
 
         return distance(MainActivity.latitude,item.getLatitud(), MainActivity.longitude, item.getLongitud())+"";
     }
-    public static double distance(double lat1, double lat2, double lon1,
+    public static int distance(double lat1, double lat2, double lon1,
                                   double lon2) {
         if(lat1==0)
         {
@@ -130,7 +130,7 @@ public class Adaptador extends BaseAdapter {
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         float dist = (float) (earthRadius * c);
 
-        return dist;
+        return (int) dist;
 
     }
 

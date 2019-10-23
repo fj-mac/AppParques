@@ -14,8 +14,13 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
@@ -27,6 +32,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     private Button aceptarAuto;
     private Button aceptarManual;
+    private TextView ciudadActual;
     private Button login;
     private FusedLocationProviderClient fusedLocationClient;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -46,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     public static LocationManager locationManager;
     public static double longitude=0;
     public static double latitude=0;
+    private Spinner spinner;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -56,9 +64,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         aceptarAuto = (Button) findViewById(R.id.button);
         aceptarManual = (Button) findViewById(R.id.button2);
         login = (Button) findViewById(R.id.buttonLogIn);
+        ciudadActual=(TextView) findViewById(R.id.textView3);
         startTime = new Date(System.currentTimeMillis());
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
+        spinner=(Spinner) findViewById(R.id.editText);
+        addItemsOnSpinner();
         new Thread(new Runnable() {
             public void run() {
                 if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -88,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         aceptarManual.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openHome();
+                openHome2();
             }
         });
 
@@ -126,28 +136,64 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     public void openHome(){
 
-        actualizarLocation();
-        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(this.CONNECTIVITY_SERVICE);
-        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
-                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
-            Intent intent =new Intent(this, Home.class);
-            intent.putExtra("VieneDe","home");
-            startActivity(intent);
-        }
-        else{
-            if(Home.listItems==null)
-            {
-                Toast.makeText(this, "Actuelmente no dispone del servicio de red. Por favor Intente mas tarde", Toast.LENGTH_LONG).show();
-            }
-            else
-            {
+        if(ciudadActual.getText().toString().equals("Bogotá"))
+        {
+            ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(this.CONNECTIVITY_SERVICE);
+            if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                    connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
                 Intent intent =new Intent(this, Home.class);
                 intent.putExtra("VieneDe","home");
                 startActivity(intent);
             }
+            else{
+                if(Home.listItems==null)
+                {
+                    Toast.makeText(this, "Actualmente no dispone del servicio de red. Por favor Intente más tarde", Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    Intent intent =new Intent(this, Home.class);
+                    intent.putExtra("VieneDe","home");
+                    startActivity(intent);
+                }
+
+            }
+        }
+        else {
+            Toast.makeText(this, "Actualmente solo contamos con cobertura en Bogotá, Colombia", Toast.LENGTH_LONG).show();
         }
 
 
+    }
+    public void openHome2(){
+
+        if(spinner.getSelectedItem().toString().equals("Bogotá"))
+        {
+            ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(this.CONNECTIVITY_SERVICE);
+            if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                    connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+                Intent intent =new Intent(this, Home.class);
+                intent.putExtra("VieneDe","home");
+                startActivity(intent);
+            }
+            else{
+                if(Home.listItems==null)
+                {
+                    Toast.makeText(this, "Actualmente no dispone del servicio de red. Por favor Intente más tarde", Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    Intent intent =new Intent(this, Home.class);
+                    intent.putExtra("VieneDe","home");
+                    startActivity(intent);
+                }
+
+            }
+        }
+        else
+        {
+            Toast.makeText(this, "En este momento únicamente tenemos soporte en Bogotá. ", Toast.LENGTH_SHORT).show();
+        }
 
 
     }
@@ -164,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             else{
                 //Snackbar snackbar = new Snackbar.make(findViewById(android.R.id.content), "Para realizar el LogIn debe tener conexion a internet. Verifique e intente mas tarde", Snackbar.LENGTH_INDEFINITE);
                 //Snackbar snackbar =new Snackbar.make(this,"a",Snackbar.LENGTH_LONG);
-                Toast.makeText(this, "Para realizar el LogIn debe tener conexion a internet. Verifique e intente mas tarde", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Para iniciar sesión debe tener conexión a internet. Verifique e intente más tarde", Toast.LENGTH_LONG).show();
             }
         }
 
@@ -174,6 +220,24 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         double longitude = location.getLongitude();
         double latitude = location.getLatitude();
 
+    }
+    private void addItemsOnSpinner(){
+        List<String> lista=new ArrayList<String>();
+        lista.add("Bogotá");
+        lista.add("Cali");
+        lista.add("Cartagena");
+        ArrayAdapter<String> dataAdapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,lista);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(dataAdapter);
+    }
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if(getCurrentFocus()!=null)
+        {
+            InputMethodManager imm=(InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),0);
+        }
+        return super.dispatchTouchEvent(ev);
     }
     public void actualizarLocation()
     {
@@ -202,7 +266,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         }
         if (addresses.size() > 0) {
             ciudad=addresses.get(0).getLocality();
-            Toast.makeText(this, "La ciudad actual es: "+ciudad, Toast.LENGTH_SHORT).show();
+            ciudadActual.setText(ciudad);
+            ciudadActual.setBackground(null);
             Log.d("YACAMBIO", "La ciudad es: "+ ciudad);
 
         }
@@ -340,6 +405,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     public void onLocationChanged(Location location) {
         longitude=location.getLongitude();
         latitude=location.getLatitude();
+        actualizarLocation();
         Log.d("dist", "La longitud es de: "+ longitude);
     }
 

@@ -23,7 +23,7 @@
         android:id="@+id/editTextEscribirReview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:maxLength="50"
+        android:maxLength="70"
         android:digits="0123456789qwertzuiopasdfghjklyxcvbnñmABCDEFGHIJKLMNÑOPQRSTUVWXYZ., "
         android:hint="Escriba aca su review para este parque"
         android:layout_weight="8"

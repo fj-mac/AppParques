@@ -13,6 +13,8 @@
         android:layout_height="111dp"
         android:hint="Deje sus comantarios aca"
         android:inputType="text"
+        android:maxLength="70"
+        android:digits="0123456789qwertzuiopasdfghjklyxcvbnñmABCDEFGHIJKLMNÑOPQRSTUVWXYZ., "
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

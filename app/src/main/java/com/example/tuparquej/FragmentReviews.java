@@ -93,12 +93,19 @@ public class FragmentReviews extends Fragment implements View.OnClickListener {
                 connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
             if(Login.user!=null)
             {
-
-                Map<String, Object> reviewNuevo = new HashMap<>();
-                reviewNuevo.put("nombre", Login.user.getDisplayName());
-                reviewNuevo.put("review", editTextReview.getText().toString());
-                db.collection("Parques").document(index+"").collection("Reviews").add(reviewNuevo);
-                Toast.makeText(getActivity(), "Se ha agregado su review", Toast.LENGTH_SHORT).show();
+                if (editTextReview.getText().length()<=5)
+                {
+                    Toast.makeText(getActivity(), "Se debe escribir como mínimo 5 caracteres", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Map<String, Object> reviewNuevo = new HashMap<>();
+                    reviewNuevo.put("nombre", Login.user.getDisplayName());
+                    reviewNuevo.put("review", editTextReview.getText().toString());
+                    db.collection("Parques").document(index+"").collection("Reviews").add(reviewNuevo);
+                    Toast.makeText(getActivity(), "Se ha agregado su review", Toast.LENGTH_SHORT).show();
+                    editTextReview.setText("");
+                }
+               
             }
             else {
                 Toast.makeText(getActivity(), "Debe iniciar sesión para hacer un review", Toast.LENGTH_SHORT).show();

@@ -13,12 +13,24 @@
         android:windowSoftInputMode="adjustPan|adjustResize"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".Login"></activity>
-        <activity android:name=".AgregarReview" />
-        <activity android:name=".menu" />
-        <activity android:name=".parque" />
-        <activity android:name=".Home" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".Login"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"></activity>
+        <activity android:name=".AgregarReview"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".menu"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".parque"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Home"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".MainActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

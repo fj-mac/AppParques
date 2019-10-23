@@ -1,8 +1,10 @@
 package com.example.tuparquej;
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -10,7 +12,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -67,6 +71,7 @@ public class parque extends AppCompatActivity {
     Fragment fragment;
 
 
+    @SuppressLint("ResourceType")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +93,8 @@ public class parque extends AppCompatActivity {
         goMap=(ImageButton) findViewById(R.id.imageButtonGo);
         imagenParque=(ImageView) findViewById(R.id.imageView6);
         favorito=findViewById(R.id.imageButtonFavorito);
+
+
 
         Bundle b=getIntent().getExtras();
         if(b!=null)
@@ -149,6 +156,16 @@ public class parque extends AppCompatActivity {
         });
     }
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if(getCurrentFocus()!=null)
+        {
+            InputMethodManager imm=(InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),0);
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
     public void openReviews(Entidad par){
 
             ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(this.CONNECTIVITY_SERVICE);
@@ -202,7 +219,7 @@ public class parque extends AppCompatActivity {
             }
         }
         else{
-            Toast.makeText(this, "Para acceder a las funciones Premium debe hacer Login", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Para acceder a las funciones Premium debe iniciar sesión", Toast.LENGTH_LONG).show();
         }
     }
     public void openDetails2(Entidad par){
@@ -255,12 +272,14 @@ public class parque extends AppCompatActivity {
             ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(this.CONNECTIVITY_SERVICE);
             if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
                     connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
-
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+                startActivity(mapIntent);
             }
             else{
                 if(verif==0)
                 {
-                    Toast.makeText(this, "No hay conexion a internet. Si tiene maps offline, vuelva a presionar go para continuar", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "No hay conexión a internet. Si tiene mapas offline, vuelva a presionar GO para continuar", Toast.LENGTH_LONG).show();
                     verif++;
                 }
                 else{
@@ -302,13 +321,12 @@ public class parque extends AppCompatActivity {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 verificarFavoritos();
-                                Toast.makeText(parque.this, "Se ha guardado el parque como favorito", Toast.LENGTH_SHORT).show();
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(parque.this, "Error! el usuario es: "+usuario+"El error es: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(parque.this, "Parece que tenemos un problema. Inténtalo más tarde", Toast.LENGTH_SHORT).show();
                             }
                         });
             }
@@ -319,13 +337,13 @@ public class parque extends AppCompatActivity {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 verificarFavoritos();
-                                Toast.makeText(parque.this, "Se ha guardado el parque como favorito", Toast.LENGTH_SHORT).show();
+
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(parque.this, "Error! el usuario es: "+usuario+"El error es: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(parque.this, "Parece que tenemos un problema. Inténtalo más tarde", Toast.LENGTH_SHORT).show();
                             }
                         });
             }

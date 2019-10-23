@@ -80,35 +80,79 @@ public class menu extends AppCompatActivity {
         finish();
     }
     private void sugerir(){
-        Intent intent =new Intent(this, AgregarReview.class);
-        startActivity(intent);
-        finish();
+
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(this.CONNECTIVITY_SERVICE);
+        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            Intent intent =new Intent(this, AgregarReview.class);
+            startActivity(intent);
+            finish();
+        }
+        else{
+            //Snackbar snackbar = new Snackbar.make(findViewById(android.R.id.content), "Para realizar el LogIn debe tener conexion a internet. Verifique e intente mas tarde", Snackbar.LENGTH_INDEFINITE);
+            //Snackbar snackbar =new Snackbar.make(this,"a",Snackbar.LENGTH_LONG);
+            Toast.makeText(this, "Para sugerir debe tener conexión a internet. Verifique e intente más tarde", Toast.LENGTH_LONG).show();
+        }
+
+
+
+
+
+
+
+
 
     }
     private void verFavoritos(){
         //Cargar solo Favoritos
-        parques.addSnapshotListener(this, new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                if(e !=null){
-                    Toast.makeText(menu.this, "Error entrando a base de datos", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                Home.listItems=new ArrayList<>();
-                for(QueryDocumentSnapshot documentSnapshots: queryDocumentSnapshots){
-                    Entidad entid=documentSnapshots.toObject(Entidad.class);
-                    if(Login.listaFavoritos.contains(entid.getId()))
-                    {
-                        Home.listItems.add(entid);
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(this.CONNECTIVITY_SERVICE);
+        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            
+            if(Login.user!=null)
+            {
+                parques.addSnapshotListener(this, new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                        if(e !=null){
+                            Toast.makeText(menu.this, "Error entrando a base de datos", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        Home.listItems=new ArrayList<>();
+                        for(QueryDocumentSnapshot documentSnapshots: queryDocumentSnapshots){
+                            try{
+                                Entidad entid=documentSnapshots.toObject(Entidad.class);
+                                if(Login.listaFavoritos.contains(entid.getId()))
+                                {
+                                    Home.listItems.add(entid);
+                                    
+                                }
+                            }catch (Exception wwww)
+                            {
+                                Toast.makeText(menu.this, "Parece que estamos teniendo problemas. Discúlpanos e intenta más tarde", Toast.LENGTH_SHORT).show();
+                                
+                            }
+
+                        }
+                        Intent intent =new Intent(menu.this, Home.class);
+                        intent.putExtra("VieneDe","favoritos");
+                        startActivity(intent);
+                        finish();
+                        //ver favoritos
+                       
                     }
-                }
-                //ver favoritos
-                Intent intent =new Intent(menu.this, Home.class);
-                intent.putExtra("VieneDe","favoritos");
-                startActivity(intent);
-                finish();
+                });
             }
-        });
+            else{
+                Toast.makeText(this, "Debe iniciar sesión para poder ver sus favoritos", Toast.LENGTH_SHORT).show();
+            }
+            
+        }
+        else{
+
+            Toast.makeText(this, "Para ver favoritos debe tener conexión a internet. Verifique e intente más tarde", Toast.LENGTH_LONG).show();
+        }
+
 
 
     }
@@ -140,7 +184,7 @@ public class menu extends AppCompatActivity {
         else{
             //Snackbar snackbar = new Snackbar.make(findViewById(android.R.id.content), "Para realizar el LogIn debe tener conexion a internet. Verifique e intente mas tarde", Snackbar.LENGTH_INDEFINITE);
             //Snackbar snackbar =new Snackbar.make(this,"a",Snackbar.LENGTH_LONG);
-            Toast.makeText(this, "Para realizar el LogIn debe tener conexion a internet. Verifique e intente mas tarde", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Para realizar iniciar sesión debe tener conexión a internet. Verifique e intente más tarde", Toast.LENGTH_LONG).show();
         }
     }
     public void irALogOut(){

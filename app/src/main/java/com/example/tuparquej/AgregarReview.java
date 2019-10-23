@@ -20,7 +20,6 @@ public class AgregarReview extends AppCompatActivity {
     private static final String KEY_NOMBRE="nombre";
     private static final String KEY_REVIEW="review";
 
-    private EditText editTextNombre;
     private EditText editTextReview;
 
     private FirebaseFirestore db= FirebaseFirestore.getInstance();
@@ -36,21 +35,28 @@ public class AgregarReview extends AppCompatActivity {
         ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(this.CONNECTIVITY_SERVICE);
         if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
                 connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
-            String nombre=null;
-            if (Login.user!=null)
+            if(editTextReview.getText().toString().length()<10)
             {
-                nombre=Login.user.getDisplayName();
+                Toast.makeText(this, "Debe incluir al menos 10 caracteres", Toast.LENGTH_SHORT).show();
             }
             else{
-                nombre="Anonimo";
+                String nombre=null;
+                if (Login.user!=null)
+                {
+                    nombre=Login.user.getDisplayName();
+                }
+                else{
+                    nombre="Anonimo";
+                }
+                String review=editTextReview.getText().toString();
+                Map<String, Object> note=new HashMap<>();
+                note.put(KEY_NOMBRE,nombre);
+                note.put (KEY_REVIEW, review);
+                db.collection("Comentarios").add(note);
+                Toast.makeText(this, "Se ha enviado su comentario", Toast.LENGTH_LONG).show();
+                finish();
             }
-            String review=editTextReview.getText().toString();
-            Map <String, Object> note=new HashMap<>();
-            note.put(KEY_NOMBRE,nombre);
-            note.put (KEY_REVIEW, review);
-            db.collection("Comentarios").add(note);
-            Toast.makeText(this, "Se ha enviado su comentario", Toast.LENGTH_LONG).show();
-            finish();
+
         }
         else {
             Toast.makeText(this, "Debe tener conexión a internet", Toast.LENGTH_SHORT).show();

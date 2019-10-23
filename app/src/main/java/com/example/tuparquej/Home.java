@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -134,14 +133,14 @@ public class Home extends AppCompatActivity {
                         for(QueryDocumentSnapshot documentSnapshots: queryDocumentSnapshots){
                             Entidad entid=documentSnapshots.toObject(Entidad.class);
                             listItems.add(entid);
-                            Toast.makeText(Home.this, "Se ha agregado", Toast.LENGTH_SHORT).show();
+
                         }
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(Home.this, "Error!", Toast.LENGTH_SHORT).show();
+
                         Log.d(TAG, e.toString());
                     }
                 });
