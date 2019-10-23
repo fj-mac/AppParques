@@ -29,6 +29,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.IOException;
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private Button aceptarManual;
     private TextView ciudadActual;
     private Button login;
+    private Button logout;
     private FusedLocationProviderClient fusedLocationClient;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private String ciudad;
@@ -64,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         aceptarAuto = (Button) findViewById(R.id.button);
         aceptarManual = (Button) findViewById(R.id.button2);
         login = (Button) findViewById(R.id.buttonLogIn);
+        logout=(Button) findViewById(R.id.buttonLogOut);
         ciudadActual=(TextView) findViewById(R.id.textView3);
         startTime = new Date(System.currentTimeMillis());
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -109,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
             }
         });
+        logout.setOnClickListener(openLogOut());
 
     }
 
@@ -118,6 +122,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         if(Login.user!=null)
         {
             login.setVisibility(View.INVISIBLE);
+            logout.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            login.setVisibility(View.VISIBLE);
+            logout.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -213,6 +223,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 Toast.makeText(this, "Para iniciar sesión debe tener conexión a internet. Verifique e intente más tarde", Toast.LENGTH_LONG).show();
             }
         }
+
+    }
+    public void openLogOut(){
+        FirebaseAuth.getInstance().signOut();
+        Login.user=null;
+        logout.setVisibility(View.INVISIBLE);
+        login.setVisibility(View.VISIBLE);
 
     }
 

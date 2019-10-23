@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -19,8 +20,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class menu extends AppCompatActivity {
 
@@ -188,19 +187,9 @@ public class menu extends AppCompatActivity {
         }
     }
     public void irALogOut(){
-
+        FirebaseAuth.getInstance().signOut();
+        Login.user=null;
+        logout.setVisibility(View.INVISIBLE);
+        login.setVisibility(View.VISIBLE);
     }
-    public void irALogOutt(){
-        Map<String, Object> horariosNuevo = new HashMap<>();
-        horariosNuevo.put("nombre", "Parque 80-11");
-        horariosNuevo.put("barrio", "El Nogal");
-        horariosNuevo.put("details", "Este parque es muy bonito tiene bla bla bla y tambien bla bla bla");
-        horariosNuevo.put("estrellas", 4);
-        horariosNuevo.put("id", 1);
-        horariosNuevo.put("imagen", "https://www.eltiempo.com/files/article_main/uploads/2019/10/11/5da09be16a488.jpeg");
-        horariosNuevo.put("latitud", 4.66407);
-        horariosNuevo.put("longitud", -74.053327);
-        db.collection("Parques").document(1+"").set(horariosNuevo);
-    }
-
 }
