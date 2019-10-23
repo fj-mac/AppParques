@@ -1,8 +1,5 @@
 package com.example.tuparquej;
 
-import java.security.Key;
-import java.util.HashMap;
-
 public class Entidad {
     private String imagen;
     private int id;
@@ -12,7 +9,6 @@ public class Entidad {
     private int estrellas;
     private double latitud;
     private double longitud;
-    private HashMap<Key,String> reviews;
 
     public Entidad() {
     }
@@ -91,11 +87,4 @@ public class Entidad {
         this.longitud = longitud;
     }
 
-    public HashMap<Key,String> getReviews() {
-        return reviews;
-    }
-
-    public void setReviews(HashMap<Key,String> reviews) {
-        this.reviews = reviews;
-    }
 }

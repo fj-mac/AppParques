@@ -16,6 +16,7 @@ public class parqueAhora extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parque_ahora);
+
         reviews=(ImageButton) findViewById(R.id.imageButtonReviews);
         details=(ImageButton) findViewById(R.id.imageButtonDetails);
 
@@ -42,5 +43,5 @@ public class parqueAhora extends AppCompatActivity {
         Intent intent =new Intent(this, parqueDetails.class);
         startActivity(intent);
     }
-    
+
 }

@@ -22,6 +22,10 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class Home extends AppCompatActivity {
     private ListView lvItems;
@@ -50,7 +54,24 @@ public class Home extends AppCompatActivity {
         });
         //mes
     }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try{
+            Date finish=new Date(System.currentTimeMillis());
+            long tiempo=Math.abs(finish.getTime() - MainActivity.startTime.getTime());
+            long diferencia= TimeUnit.MINUTES.convert(tiempo,TimeUnit.MILLISECONDS);
+            Map<String, Object> horariosNuevo;
 
+
+            horariosNuevo = new HashMap<>();
+            horariosNuevo.put("tiempo",diferencia);
+            db.collection("TiempoDeUso").document().set(horariosNuevo);
+
+        }catch (Exception e){
+
+        }
+    }
     @Override
     protected void onStart() {
         super.onStart();
@@ -69,8 +90,13 @@ public class Home extends AppCompatActivity {
                     }
                     listItems=new ArrayList<>();
                     for(QueryDocumentSnapshot documentSnapshots: queryDocumentSnapshots){
-                        Entidad entid=documentSnapshots.toObject(Entidad.class);
-                        listItems.add(entid);
+                        try{
+                            Entidad entid=documentSnapshots.toObject(Entidad.class);
+                            listItems.add(entid);
+                        }catch (Exception w)
+                        {
+
+                        }
 
                     }
                     adaptador=new Adaptador(Home.this,getArrayList() );

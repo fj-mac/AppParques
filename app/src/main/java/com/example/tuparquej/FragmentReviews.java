@@ -69,8 +69,13 @@ public class FragmentReviews extends Fragment implements View.OnClickListener {
                 }
                 revs=new ArrayList<>();
                 for(QueryDocumentSnapshot documentSnapshots: queryDocumentSnapshots){
-                    Review entid=documentSnapshots.toObject(Review.class);
-                    revs.add(entid);
+                    try{
+                        Review entid=documentSnapshots.toObject(Review.class);
+                        revs.add(entid);
+                    }catch (Exception ex){
+
+                    }
+
                 }
                 adaptador=new AdaptadorReviews(getActivity(), getArrayList());
                 lista.setAdapter(adaptador);

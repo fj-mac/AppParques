@@ -72,4 +72,32 @@
         app:layout_constraintVertical_bias="0.067"
         app:srcCompat="@drawable/sugerir" />
 
+    <ImageButton
+    android:id="@+id/imageButtonLogInMenu"
+    android:layout_width="76dp"
+    android:layout_height="47dp"
+    android:background="@null"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.495"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/imageButtonSugerir"
+    app:layout_constraintVertical_bias="0.062"
+    app:srcCompat="@drawable/loginmenu" />
+
+    <ImageButton
+        android:id="@+id/imageButtonLogOutMenu"
+        android:layout_width="76dp"
+        android:layout_height="47dp"
+        android:background="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageButtonSugerir"
+        app:layout_constraintVertical_bias="0.062"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/logoutmenu" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
