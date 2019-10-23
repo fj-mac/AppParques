@@ -34,6 +34,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Login extends AppCompatActivity {
 
@@ -101,28 +103,44 @@ public class Login extends AppCompatActivity {
         String email=correo.getText().toString();
         String password=clave.getText().toString();
         String password2=clave2.getText().toString();
-       if(password==password2)
+       if(password.equals(password2))
        {
-           mAuth.createUserWithEmailAndPassword(email, password)
-                   .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                       @Override
-                       public void onComplete(@NonNull Task<AuthResult> task) {
-                           if (task.isSuccessful()) {
-                               // Sign in success, update UI with the signed-in user's information
-                               //Log.d(TAG, "createUserWithEmail:success");
-                               user = mAuth.getCurrentUser();
-                               //updateUI(user);
-                               finish();
-                           } else {
-                               // If sign in fails, display a message to the user.
-                               //Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                               Toast.makeText(Login.this, "No sirvio el login, intente con google o mas tarde", Toast.LENGTH_SHORT).show();
-                               //updateUI(null);
-                           }
+           if (isValidPassword(password))
+           {
+               if(password.length()>=6)
+               {
+                   mAuth.createUserWithEmailAndPassword(email, password)
+                           .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                               @Override
+                               public void onComplete(@NonNull Task<AuthResult> task) {
+                                   if (task.isSuccessful()) {
+                                       // Sign in success, update UI with the signed-in user's information
+                                       //Log.d(TAG, "createUserWithEmail:success");
+                                       user = mAuth.getCurrentUser();
+                                       //updateUI(user);
+                                       finish();
+                                   } else {
+                                       // If sign in fails, display a message to the user.
+                                       Log.w("OJO", "createUserWithEmail:failure", task.getException());
+                                       Toast.makeText(Login.this, "Ocurrio un error en nuestros servidores. Por favor intentelo mas tarde", Toast.LENGTH_LONG).show();
+                                       //updateUI(null);
+                                   }
 
-                           // ...
-                       }
-                   });
+                                   // ...
+                               }
+                           });
+               }
+               else
+               {
+                   Toast.makeText(Login.this, "La contraseña debe contener al menos 6 caracteres", Toast.LENGTH_LONG).show();
+               }
+
+           }
+           else {
+               Toast.makeText(this, "La contraseña debe ser menor a 20 caracteres y contener al menos 1 letra mayuscula, un caracter especial y un numero", Toast.LENGTH_LONG).show();
+
+           }
+
        }
        else
        {
@@ -247,5 +265,16 @@ public class Login extends AppCompatActivity {
                 }
             }
         });
+    }
+    public static boolean isValidPassword(final String password) {
+
+        Pattern pattern;
+        Matcher matcher;
+        final String PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{4,}$";
+        pattern = Pattern.compile(PASSWORD_PATTERN);
+        matcher = pattern.matcher(password);
+
+        return matcher.matches();
+
     }
 }

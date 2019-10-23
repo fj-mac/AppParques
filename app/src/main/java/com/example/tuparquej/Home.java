@@ -63,7 +63,7 @@ public class Home extends AppCompatActivity {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                     if(e !=null){
-                        Toast.makeText(Home.this, "Error entrando a base de datos", Toast.LENGTH_SHORT).show();
+
                         Log.d(TAG, e.toString());
                         return;
                     }
@@ -71,7 +71,7 @@ public class Home extends AppCompatActivity {
                     for(QueryDocumentSnapshot documentSnapshots: queryDocumentSnapshots){
                         Entidad entid=documentSnapshots.toObject(Entidad.class);
                         listItems.add(entid);
-                        Toast.makeText(Home.this, "Se ha agregado", Toast.LENGTH_SHORT).show();
+
                     }
                     adaptador=new Adaptador(Home.this,getArrayList() );
                     lvItems.setAdapter(adaptador);

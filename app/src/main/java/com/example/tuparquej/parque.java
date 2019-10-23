@@ -151,8 +151,6 @@ public class parque extends AppCompatActivity {
 
     public void openReviews(Entidad par){
 
-        if(Login.user==null)
-        {
             ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(this.CONNECTIVITY_SERVICE);
             if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
                     connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
@@ -166,19 +164,22 @@ public class parque extends AppCompatActivity {
                 fragment=new FragmentReviews();
                 FragmentManager fm=getFragmentManager();
                 FragmentTransaction ft=fm.beginTransaction();
+                Bundle args = new Bundle();
+                args.putInt("id", id);
+                fragment.setArguments(args);
                 ft.replace(R.id.frg,fragment);
                 ft.commit();
             }
             else{
                 Toast.makeText(this, "Para ver los reviews del parque se requiere conexión a internet", Toast.LENGTH_LONG).show();
             }
-        }
+
 
     }
 
 
     public void openAhora(Entidad par){
-        if(Login.user==null)
+        if(Login.user!=null)
         {
             ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(this.CONNECTIVITY_SERVICE);
             if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
@@ -199,6 +200,9 @@ public class parque extends AppCompatActivity {
             else{
                 Toast.makeText(this, "Para ver el estado actual se requiere conexión a internet", Toast.LENGTH_LONG).show();
             }
+        }
+        else{
+            Toast.makeText(this, "Para acceder a las funciones Premium debe hacer Login", Toast.LENGTH_SHORT).show();
         }
     }
     public void openDetails2(Entidad par){
@@ -248,8 +252,6 @@ public class parque extends AppCompatActivity {
         String lugar="google.streetview:cbll="+longit+", "+latid;
         Uri gmmIntentUri = Uri.parse("google.navigation:q="+latid+","+longit);
 
-        if(Login.user==null)
-        {
             ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(this.CONNECTIVITY_SERVICE);
             if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
                     connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
@@ -269,7 +271,7 @@ public class parque extends AppCompatActivity {
                     startActivity(mapIntent);
                 }
             }
-        }
+
 
 
 
